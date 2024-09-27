@@ -1,19 +1,21 @@
-
-TARGET := a.out 
+TARGET := a.out
 GCC := arm-linux-g++
 
-${TARGET}: main.o point.o color.o  rect.o screen.o  bmp.o map.o shape.o circle.o food.o  snake.o  game.o  touchevent.o leaderboard.o font.o
-	${GCC} $^ -o  $@   -pthread
-	cp ${TARGET}   ~/tftpboot	
-%.o: %.cpp
-	${GCC} $^  -c  -std=c++11
+SRC_DIR := src
+INC_DIR := inc
 
+SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(SRC_DIR)/%.o)
+
+CFLAGS := -I$(INC_DIR) -std=c++11
+
+${TARGET}: ${OBJS}
+	${GCC} $^ -o $@ -pthread
+	cp ${TARGET} ~/tftpboot
+
+$(SRC_DIR)/%.o: $(SRC_DIR)/%.cpp
+	${GCC} $(CFLAGS) -c $< -o $@
 
 clean:
-	rm *.o  -f 
-	rm ${TARGET} -f 
-
-
-			
-
-
+	rm -f $(OBJS)
+	rm -f ${TARGET}
